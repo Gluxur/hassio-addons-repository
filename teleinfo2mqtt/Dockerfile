@@ -1,7 +1,19 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim-arm32v7
+FROM node:14-alpine
 
-COPY app/ /app/
+LABEL maintainer="fmartinou"
 
-WORKDIR /app
+RUN apk update && apk add --no-cache make gcc g++ python linux-headers udev
 
-ENTRYPOINT ["dotnet", "/app/TeleInformation2Mqtt.dll"]
+WORKDIR /home/node/app
+
+# Default Command
+CMD ["node", "index"]
+
+# Copy package.json
+COPY package* ./
+
+# Copy app
+COPY app/ ./
+
+# Install dependendencies
+RUN npm ci --production
